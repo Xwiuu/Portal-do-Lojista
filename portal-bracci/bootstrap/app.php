@@ -21,6 +21,11 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
+
+        // Adiciona o nosso middleware com o apelido 'b2b.approved'
+        $middleware->alias([
+            'b2b.approved' => \App\Http\Middleware\CheckB2BApproval::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

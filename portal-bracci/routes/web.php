@@ -1,20 +1,22 @@
 <?php
 
-use Illuminate\Support\Facades\Http;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Product;
+use App\Models\User;
 
-Route::get('/auth/callback', function (Request $request) {
-    $shop = $request->query('shop');
-    $code = $request->query('code');
+// 1️⃣ PORTA DOS FUNDOS (VIP)
+Route::get('/entrar-vip', function () {
+    $admin = User::where('email', 'admin@bracci.com.br')->first();
+    Auth::login($admin);
+    return "Aí sim! Logado como Admin. Agora abra: /produtos";
+});
 
-    if (!$shop || !$code) return "Faltam parâmetros!";
+// 2️⃣ O COFRE DE PRODUTOS (Protegido)
+Route::middleware(['auth', 'b2b.approved'])->group(function () {
+    
+    Route::get('/produtos', function () {
+        return Product::all(); 
+    });
 
-    // Trocando o 'code' pelo Access Token real
-    $response = Http::withoutVerifying()->post("https://{$shop}/admin/oauth/access_token", [
-        'client_id'     => env('SHOPIFY_API_KEY'),
-        'client_secret' => env('SHOPIFY_API_SECRET'), // Use a 'Chave Secreta' do painel aqui
-        'code'          => $code,
-    ]);
-
-    return $response->json();
 });
