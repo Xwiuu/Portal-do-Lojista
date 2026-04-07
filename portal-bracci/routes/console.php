@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
+// routes/console.php
+use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\Facades\Artisan;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+// Isso garante que o Laravel procure comandos na pasta correta

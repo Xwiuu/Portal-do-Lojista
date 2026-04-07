@@ -1,14 +1,20 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Laravel\Fortify\Features;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Request;
 
-Route::inertia('/', 'Welcome', [
-    'canRegister' => Features::enabled(Features::registration()),
-])->name('home');
+Route::get('/auth/callback', function (Request $request) {
+    $shop = $request->query('shop');
+    $code = $request->query('code');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+    if (!$shop || !$code) return "Faltam parâmetros!";
+
+    // Trocando o 'code' pelo Access Token real
+    $response = Http::withoutVerifying()->post("https://{$shop}/admin/oauth/access_token", [
+        'client_id'     => env('SHOPIFY_API_KEY'),
+        'client_secret' => env('SHOPIFY_API_SECRET'), // Use a 'Chave Secreta' do painel aqui
+        'code'          => $code,
+    ]);
+
+    return $response->json();
 });
-
-require __DIR__.'/settings.php';

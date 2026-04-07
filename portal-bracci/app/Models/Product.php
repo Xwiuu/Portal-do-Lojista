@@ -6,11 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $fillable = [
-        'sku',
-        'nome',
-        'imagem_url',
-        'preco_base',
-        'ativo',
-    ];
+    // Essa linha mágica desliga o bloqueio de segurança e deixa salvar todos os campos
+    protected $guarded = []; 
 }
